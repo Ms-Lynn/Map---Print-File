@@ -34,19 +34,20 @@ objects = {
                    "Location" : [0, 1],
                    "Action" : ["Take"],
                    "Requirement" : [None]}    }
+
+tile = ["Start", "PlainSpace", "ThrownRoom", "SpookySpace"]
 tiles = {
-    "Start" : {"Description" : "Your in the foyer of a castle."},
-    "PlainSpace" : {"Description" : "Your are in a boring room."},
-    "ThrownRoom" : {"Description" : "Your in a beautifly thrown room."},
-    "SpookySpace" : {"Description" : "This room is very spooky!"},
-       }
+    tile[0] : {"Description" : "Your in the foyer of a castle."},
+    tile[1] : {"Description" : "Your are in a boring room."},
+    tile[2] : {"Description" : "Your in a beautifly thrown room."},
+    tile[3] : {"Description" : "This room is very spooky!"},    }
 
 map = [
-     ["Start", "PlainSpace", "SpookySpace"],
-     ["PlainSpace", "PlainSpace", "PlainSpace"],
-     ["SpookySpace", "ThrownRoom", "PlainSpace"],
-     ["PlainSpace", "PlainSpace", "PlainSpace"]
- ]
+     [tile[0], tile[1], tile[3]],
+     [tile[1], tile[1], tile[1]],
+     [tile[3], tile[2], tile[3]],
+     [tile[1], tile[1], tile[1]]     ]
+
 
 # Functions -------------------------------------------------------------------
 def Movement():
@@ -75,7 +76,7 @@ def Movement():
         elif dirchoice == "Quit":
             playing = False
         else:
-            print(f"Sorry you can not move that direction.")
+            print(f"Sorry you can not move in that direction.")
             orientating = True
 
 
