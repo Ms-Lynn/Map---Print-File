@@ -1,16 +1,34 @@
 ##############################################################################
-# Title: Simple Text Adventure Game
+# Title: RPG: Castle Adventure
+# Class: Computer Science 30
 # coder: Ms. Lynn
+# last updated: March 19th, 2023
 # version: 004
 ##############################################################################
-''' Program creates a simple map using nested lists that a character
-    can move around on through a simple menu.
-    Character now has an inventory to collect 'objects' in.
-    Program has two objects a key and a treasure chest.
-    The key must be in the characters inventory in order to open the chest
+''' Simple Text Adventure Game!
 
-    This program uses dictionaries to create objects and 
-    tile charateristics.
+    Game takes place in a castle, created with a map.
+    Player can choose to move around the map and to look around.
+    Players goal is to find and open a treasure chest.
+    In order to open the teasure chest the player must find and take a key.
+    Every time the game is started the key will be placed in a randon room;
+    this is possible beucase the program imported a random library.
+
+    The map is make with an array(nested lists). 
+    Each Map item is a type of tile.
+    Tile detalies are stored in a nested dictionary(database).
+
+    Odjects characteristics and current statues are stored in a nested 
+    dictionary(databases).
+    Player has an inventory created by an empty list.
+    Some objects can be picked up and added to the players inventory.
+
+    Players can quit the game at anytime, the game will end using sys.exit()
+    a funtion that is imported with the sys library.
+
+    All of the players choices are confirmed by printing relivant messages to
+    the consol. Lots of messages repeat so there is a dictionary of common
+    messages that can be referenced and used throught the code.
     '''
 ##############################################################################
 # Imports --------------------------------------------------------------------
@@ -19,7 +37,7 @@ import random
 
 # Global Variables -----------------------------------------------------------
 # Messages that will be reused through the game in a dictionary
-messages = { "Quit" : "Thank for playing! You have now quit the game. ",
+messages = { "Quit" : "Thank for playing!'\n'You have now quit the game. ",
              "Error" : "Invalid choice, please make another selection. "}
 
 # tile information
@@ -39,6 +57,11 @@ row = 0     # current players row location on map
 col = 0     # current players columb location on map
 max_row = 3
 max_col = 2
+
+# Main menu choices
+main_menu = ["walk", "look"]
+# Direction choices for a sub menu
+direction_menu = ["north", "south", "east", "west"]
 
 inventory = []  # empty list to use as inventory for objects 
 # Database for object information
@@ -78,35 +101,33 @@ def Movement():
        directions for the user to choose from. When a valid choice
        is made the global variables row and col[umb] will be changed
        so that the players current location will update.'''
-    global row, col, max_row, max_col, messages
+    global row, col
     orientating = True
     while orientating:
         print(f"Choose a direction: ")
         if not row==0:
-            print(f"-North")
+            print(f"-{direction_menu[0].capitalize()}")
         if not row==max_row:
-            print(f"-South")
+            print(f"-{direction_menu[1].capitalize()}")
         if not col==max_col:
-            print(f"-East")
+            print(f"-{direction_menu[2].capitalize()}")
         if not col==0:
-            print(f"-West")
+            print(f"-{direction_menu[3].capitalize()}")
         orientating = False
-        dirchoice = input(f"Choice: ")
-        if dirchoice == "North" and row > 0:
+        dirchoice = input(f"Choice: ").lower()
+        if dirchoice == direction_menu[0] and row > 0:
             row -= 1
-        elif dirchoice == "South" and row < max_row:
+        elif dirchoice == direction_menu[1] and row < max_row:
             row += 1
-        elif dirchoice == "East" and col < max_col:
+        elif dirchoice == direction_menu[2] and col < max_col:
             col += 1
-        elif dirchoice == "West" and col > 0:
+        elif dirchoice == direction_menu[3] and col > 0:
             col -= 1
-        elif dirchoice == "Quit":
-            message = messages["Quit"]
-            print(f"{message} ")
+        elif dirchoice == "quit":
+            print(f"{messages['Quit']} ")
             sys.exit()
         else:
-            message = messages["Error"]
-            print(f"{message}")
+            print(f"{messages['Error']}")
             orientating = True
 
 
@@ -144,31 +165,30 @@ def InspectRoom():
 def MainMenu():
     '''When the game is activated these are all the players inital
        actions that are possible. This is the games main menu.'''
-    global messages
     thinking = True
     while thinking:
         print(f"Choose to move to another room or look around: ")
-        print(f"-Walk")
-        print(f"-Look")
-        mainChoice = input(f"Choice: ")
-        if mainChoice == "Walk":
+        # loop through all main menu options and print to the screen
+        for options in main_menu:
+          print(f"-{options.capitalize()}")
+        mainChoice = input(f"Choice: ").lower()
+        if mainChoice == "walk":
             Movement()
-        elif mainChoice == "Look":
+            thinking = False
+        elif mainChoice == "look":
             InspectRoom()
-        elif mainChoice == "Quit":
-            message = messages["Quit"]
-            print(f"{message} ")
+        elif mainChoice == "quit":
+            print(f"{messages['Quit']} ")
             sys.exit()
         else:
-            message = messages["Error"]
-            print(f"{message}") 
+            print(f"{messages['Error']}") 
 
 
 def ChestActions():
     '''When the player choosed to inspect the chest object this function
        is triggered so that it can provided valid options pertaining to this
        object. Main game play goal is to find a key and then open this chest.'''
-    global objects, inventory, messages
+    global objects, inventory
     deciding = True
     while deciding:
         print(f"Choose an Actions: ")
@@ -201,19 +221,17 @@ def ChestActions():
         elif chest_choice == "Done":
             deciding = False
         elif chest_choice == "Quit":
-            message = messages["Quit"]
-            print(f"{message} ")
+            print(f"{messages['Quit']} ")
             sys.exit()
         else:
-            message = messages["Error"]
-            print(f"{message}")
+            print(f"{messages['Error']}")
   
 
 def KeyActions():
     '''When the player finds the key object this fuction will trigger to give
        the player options that are unique to this object. The play will be able
        to pick up the key and place it in their inventory. '''
-    global objects, inventory, messages
+    global objects, inventory
     deciding = True
     while deciding: 
         print(f"Choose an Actions: ")
@@ -232,12 +250,10 @@ def KeyActions():
         elif chest_choice == "Done":
             deciding = False
         elif chest_choice == "Quit":
-            message = messages["Quit"]
-            print(f"{message} ")
+            print(f"{messages['Quit']} ")
             sys.exit()
         else:
-            message = messages["Error"]
-            print(f"{message}")
+            print(f"{messages['Error']}")
         
   
 # Main -----------------------------------------------------------------------

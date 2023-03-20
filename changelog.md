@@ -41,3 +41,7 @@ added - libary sys so that 'quit' options more efficently end
 removed - while loop variables
 added - messages dictionary for repetative messages in the game
 fixed - DocString line ups
+fixed - Headers DocString
+updated - Header information
+created - lists for the main menu and directions menu
+updated - user input to deal ignor capitalization
