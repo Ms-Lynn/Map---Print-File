@@ -1,28 +1,47 @@
-###############################################################################
+##############################################################################
 # Title: Simple Text Adventure Game
 # coder: Ms. Lynn
-# version: 003
-###############################################################################
+# version: 004
+##############################################################################
 ''' Program creates a simple map using nested lists that a character
     can move around on through a simple menu.
     Character now has an inventory to collect 'objects' in.
     Program has two objects a key and a treasure chest.
     The key must be in the characters inventory in order to open the chest
 
-    This program uses dictionaries to create characters and 
-    Tile charateristics.
+    This program uses dictionaries to create objects and 
+    tile charateristics.
     '''
-#------------------------------------------------------------------------------
-# Current Location
-row = 0
-col = 0
+##############################################################################
+# Imports --------------------------------------------------------------------
+import sys
+import random
+
+# Global Variables -----------------------------------------------------------
+# Messages that will be reused through the game in a dictionary
+messages = { "Quit" : "Thank for playing! You have now quit the game. ",
+             "Error" : "Invalid choice, please make another selection. "}
+
+# tile information
+tile = ["Start", "PlainSpace", "ThrownRoom", "SpookySpace"]
+tiles = {
+    tile[0] : {"Description" : "Your in the foyer of a castle."},
+    tile[1] : {"Description" : "Your are in a boring room."},
+    tile[2] : {"Description" : "Your in a beautifly thrown room."},
+    tile[3] : {"Description" : "This room is very spooky!"},    }
+# games map made with an array
+map = [
+     [tile[0], tile[1], tile[3]],
+     [tile[1], tile[1], tile[1]],
+     [tile[3], tile[2], tile[3]],
+     [tile[1], tile[1], tile[1]]     ]
+row = 0     # current players row location on map
+col = 0     # current players columb location on map
 max_row = 3
 max_col = 2
 
-inventory = []
-
-playing = True
-
+inventory = []  # empty list to use as inventory for objects 
+# Database for object information
 objects = {
           "Chest" : {"Description" : "You find a treasure chest.",
                      "Status" : "closed",
@@ -35,29 +54,32 @@ objects = {
                    "Action" : ["Take"],
                    "Requirement" : [None]}    }
 
-tile = ["Start", "PlainSpace", "ThrownRoom", "SpookySpace"]
-tiles = {
-    tile[0] : {"Description" : "Your in the foyer of a castle."},
-    tile[1] : {"Description" : "Your are in a boring room."},
-    tile[2] : {"Description" : "Your in a beautifly thrown room."},
-    tile[3] : {"Description" : "This room is very spooky!"},    }
 
-map = [
-     [tile[0], tile[1], tile[3]],
-     [tile[1], tile[1], tile[1]],
-     [tile[3], tile[2], tile[3]],
-     [tile[1], tile[1], tile[1]]     ]
+# Functions ------------------------------------------------------------------
+def SetUpGame():
+    '''Function is used to set up the game. This function will "hide"
+       the key object by placing it in a random room.'''
+    global objects, max_row, max_col
+    row_list = []
+    for i in range(0, (int(max_row)+1), 1):
+        row_list.append(i)
+    objects["Key"]["Location"][0] = random.choice(row_list)
+    col_list = []
+    for j in range(0, (int(max_col)+1), 1):
+        col_list.append(j)
+    objects["Key"]["Location"][1] = random.choice(col_list)
+    #x = objects["Key"]["Location"][0]
+    #y = objects["Key"]["Location"][1]
+    #print(f"Test {x}, {y}")
 
-
-# Functions -------------------------------------------------------------------
 def Movement():
     '''When player choosed 'walk' in the main menu it trigers this
        movement functions. This function will have a sub menu of
        directions for the user to choose from. When a valid choice
        is made the global variables row and col[umb] will be changed
        so that the players current location will update.'''
-    global playing, row, col, max_row, max_col
-    orientating = playing
+    global row, col, max_row, max_col, messages
+    orientating = True
     while orientating:
         print(f"Choose a direction: ")
         if not row==0:
@@ -79,19 +101,22 @@ def Movement():
         elif dirchoice == "West" and col > 0:
             col -= 1
         elif dirchoice == "Quit":
-            playing = False
+            message = messages["Quit"]
+            print(f"{message} ")
+            sys.exit()
         else:
-            print(f"Sorry you can not move in that direction.")
+            message = messages["Error"]
+            print(f"{message}")
             orientating = True
 
 
 def InspectRoom():
-      '''When player choosed 'look' in the main menu it trigers this
+    '''When player choosed 'look' in the main menu it trigers this
        inspect room functions. This function will look through the 
        games object and see if any are located on the players current
        tile. If one is then a sub menu will populate from that object
        dictionary.'''
-    global row, col, map, playing, inventory, objects
+    global row, col, map, inventory, objects
     found_object = False
     room_inventory = []
     location_description =  map[row][col]
@@ -117,35 +142,34 @@ def InspectRoom():
 
 
 def MainMenu():
-      '''When the game is activated these are all the players inital
-         actions that are possible. This is the games main menu.'''
-  global playing
-  thinking = playing
-  while thinking:
-      print(f"Choose to move to another room or look around: ")
-      print(f"-Walk")
-      print(f"-Look")
-      mainChoice = input(f"Choice: ")
-      if mainChoice == "Walk":
-          Movement()
-          break
-      elif mainChoice == "Look":
-          InspectRoom()
-          if playing == False:
-              break
-      elif mainChoice == "Quit":
-          playing = False
-          break
-      else:
-         print(f"Sorry that is not a valid choice.") 
+    '''When the game is activated these are all the players inital
+       actions that are possible. This is the games main menu.'''
+    global messages
+    thinking = True
+    while thinking:
+        print(f"Choose to move to another room or look around: ")
+        print(f"-Walk")
+        print(f"-Look")
+        mainChoice = input(f"Choice: ")
+        if mainChoice == "Walk":
+            Movement()
+        elif mainChoice == "Look":
+            InspectRoom()
+        elif mainChoice == "Quit":
+            message = messages["Quit"]
+            print(f"{message} ")
+            sys.exit()
+        else:
+            message = messages["Error"]
+            print(f"{message}") 
 
 
 def ChestActions():
     '''When the player choosed to inspect the chest object this function
        is triggered so that it can provided valid options pertaining to this
        object. Main game play goal is to find a key and then open this chest.'''
-    global playing, objects, inventory
-    deciding = playing
+    global objects, inventory, messages
+    deciding = True
     while deciding:
         print(f"Choose an Actions: ")
         for action in objects["Chest"]["Action"]:
@@ -177,18 +201,20 @@ def ChestActions():
         elif chest_choice == "Done":
             deciding = False
         elif chest_choice == "Quit":
-            playing = False
-            deciding = False
+            message = messages["Quit"]
+            print(f"{message} ")
+            sys.exit()
         else:
-            print(f"Sorry that is not a valid choice")
+            message = messages["Error"]
+            print(f"{message}")
   
 
 def KeyActions():
-      '''When the player finds the key object this fuction will trigger to give
-         the player options that are unique to this object. The play will be able
-         to pick up the key and place it in their inventory. '''
-    global playing, objects, inventory
-    deciding = playing
+    '''When the player finds the key object this fuction will trigger to give
+       the player options that are unique to this object. The play will be able
+       to pick up the key and place it in their inventory. '''
+    global objects, inventory, messages
+    deciding = True
     while deciding: 
         print(f"Choose an Actions: ")
         for action in objects["Key"]["Action"]:
@@ -206,19 +232,23 @@ def KeyActions():
         elif chest_choice == "Done":
             deciding = False
         elif chest_choice == "Quit":
-            playing = False
-            deciding = False
+            message = messages["Quit"]
+            print(f"{message} ")
+            sys.exit()
         else:
-            print(f"Sorry that is not a valid choice.")
+            message = messages["Error"]
+            print(f"{message}")
         
   
-# Main Code --------------------------------------------------------------------
+# Main -----------------------------------------------------------------------
 print(f"Welcome to my Castle!")
-print(f"Goal is to find and open a treasure chest.")
-while playing:
+print(f"Goal is to find and open a treasure chest. ")
+print(f"Type Quit at any time to quit the game. ")
+# Set us game by hiding the key on a random tile
+SetUpGame()
+while True:
     location_description =  map[row][col]
     for tile in tiles:
       if tile == location_description:
         print(tiles[tile]["Description"])
     MainMenu()
-print(f"Thanks for playing!!!!")
