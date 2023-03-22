@@ -1,3 +1,4 @@
+# All of the information for the game board
 
 # tile information
 tile = ["Start", "PlainSpace", "ThrownRoom", "SpookySpace"]
@@ -14,5 +15,6 @@ map = [
      [tile[3], tile[2], tile[3]],
      [tile[1], tile[1], tile[1]]     ]
 
+# map size
 max_row = 3
 max_col = 2

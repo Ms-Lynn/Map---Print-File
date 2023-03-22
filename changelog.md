@@ -47,8 +47,9 @@ created - lists for the main menu and directions menu
 updated - user input to deal ignor capitalization
 
 v5.0
-add - file to read
+added - module for tile data
 remove - unessesary map and tile global variables calls
-add - call values using the module_name 
-      module_name.function_name()
-add - ability to write a file
+added - call values using the module_name module_name.function_name()
+fixed - error and quit messages to be called more efficently
+added - Treasure object.
+added - Treasure function to end the game.
