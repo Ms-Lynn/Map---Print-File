@@ -1,9 +1,9 @@
 ##############################################################################
-# Title: RPG: Castle Adventure
+# Title: RPG: Castle Adventure!
 # Class: Computer Science 30
 # coder: Ms. Lynn
-# last updated: March 19th, 2023
-# version: 004
+# last updated: March 22nd, 2023
+# version: 005  
 ##############################################################################
 ''' Simple Text Adventure Game!
 
@@ -34,29 +34,15 @@
 # Imports --------------------------------------------------------------------
 import sys
 import random
+import map
 
 # Global Variables -----------------------------------------------------------
 # Messages that will be reused through the game in a dictionary
 messages = { "Quit" : "Thank for playing!'\n'You have now quit the game. ",
              "Error" : "Invalid choice, please make another selection. "}
 
-# tile information
-tile = ["Start", "PlainSpace", "ThrownRoom", "SpookySpace"]
-tiles = {
-    tile[0] : {"Description" : "Your in the foyer of a castle."},
-    tile[1] : {"Description" : "Your are in a boring room."},
-    tile[2] : {"Description" : "Your in a beautifly thrown room."},
-    tile[3] : {"Description" : "This room is very spooky!"},    }
-# games map made with an array
-map = [
-     [tile[0], tile[1], tile[3]],
-     [tile[1], tile[1], tile[1]],
-     [tile[3], tile[2], tile[3]],
-     [tile[1], tile[1], tile[1]]     ]
 row = 0     # current players row location on map
 col = 0     # current players columb location on map
-max_row = 3
-max_col = 2
 
 # Main menu choices
 main_menu = ["walk", "look"]
@@ -69,12 +55,12 @@ objects = {
           "Chest" : {"Description" : "You find a treasure chest.",
                      "Status" : "closed",
                      "Location": [2, 1], 
-                     "Action" : ["Open","Inspect"],
-                     "Requirement" : ["Key", None]},
+                     "Action" : ["open","inspect"],
+                     "Requirement" : ["key", None]},
           "Key" : {"Description" : "You find a key haning on the wall.",
                    "Status" : "lost",
                    "Location" : [0, 1],
-                   "Action" : ["Take"],
+                   "Action" : ["take"],
                    "Requirement" : [None]}    }
 
 
@@ -82,13 +68,13 @@ objects = {
 def SetUpGame():
     '''Function is used to set up the game. This function will "hide"
        the key object by placing it in a random room.'''
-    global objects, max_row, max_col
+    global objects 
     row_list = []
-    for i in range(0, (int(max_row)+1), 1):
+    for i in range(0, (int(map.max_row)+1), 1):
         row_list.append(i)
     objects["Key"]["Location"][0] = random.choice(row_list)
     col_list = []
-    for j in range(0, (int(max_col)+1), 1):
+    for j in range(0, (int(map.max_col)+1), 1):
         col_list.append(j)
     objects["Key"]["Location"][1] = random.choice(col_list)
     #x = objects["Key"]["Location"][0]
@@ -107,9 +93,9 @@ def Movement():
         print(f"Choose a direction: ")
         if not row==0:
             print(f"-{direction_menu[0].capitalize()}")
-        if not row==max_row:
+        if not row==map.max_row:
             print(f"-{direction_menu[1].capitalize()}")
-        if not col==max_col:
+        if not col==map.max_col:
             print(f"-{direction_menu[2].capitalize()}")
         if not col==0:
             print(f"-{direction_menu[3].capitalize()}")
@@ -117,9 +103,9 @@ def Movement():
         dirchoice = input(f"Choice: ").lower()
         if dirchoice == direction_menu[0] and row > 0:
             row -= 1
-        elif dirchoice == direction_menu[1] and row < max_row:
+        elif dirchoice == direction_menu[1] and row < map.max_row:
             row += 1
-        elif dirchoice == direction_menu[2] and col < max_col:
+        elif dirchoice == direction_menu[2] and col < map.max_col:
             col += 1
         elif dirchoice == direction_menu[3] and col > 0:
             col -= 1
@@ -137,10 +123,10 @@ def InspectRoom():
        games object and see if any are located on the players current
        tile. If one is then a sub menu will populate from that object
        dictionary.'''
-    global row, col, map, inventory, objects
+    global row, col, inventory, objects
     found_object = False
     room_inventory = []
-    location_description =  map[row][col]
+    location_description =  map.map[row][col]
     print(f"You look around the room.")
     for object in objects:
         object_row = objects[object]["Location"][0]
@@ -193,9 +179,9 @@ def ChestActions():
     while deciding:
         print(f"Choose an Actions: ")
         for action in objects["Chest"]["Action"]:
-            print(f"-{action}")
+            print(f"-{action.capitalize()}")
         print(f"-Done")
-        chest_choice = input("Actions: ")
+        chest_choice = input("Actions: ").lower()
         # Open the Treasure Chest--------------------------------------
         if chest_choice == objects["Chest"]["Action"][0]:  
             if objects["Chest"]["Status"] == "open":
@@ -218,9 +204,9 @@ def ChestActions():
                 print(f"The chest appears to be open.")
             else:
                 print(f"Something has gone wrong with the chest.")
-        elif chest_choice == "Done":
+        elif chest_choice == "done":
             deciding = False
-        elif chest_choice == "Quit":
+        elif chest_choice == "quit":
             print(f"{messages['Quit']} ")
             sys.exit()
         else:
@@ -236,20 +222,20 @@ def KeyActions():
     while deciding: 
         print(f"Choose an Actions: ")
         for action in objects["Key"]["Action"]:
-            print(f"-{action}")
+            print(f"-{action.capitalize()}")
         print(f"-Done")
-        key_choice = input("Actions: ")
+        key_choice = input("Actions: ").lower()
         # Take Key  --------------------------------------
         if key_choice == objects["Key"]["Action"][0]:  
             objects["Key"]["Location"][0] = None
             objects["Key"]["Location"][1] = None
             objects["Key"]["Status"] = "found"
             print(f"Congrats the key is now in your inventory!")
-            inventory.append("Key")
+            inventory.append("key")
             deciding = False
-        elif chest_choice == "Done":
+        elif chest_choice == "done":
             deciding = False
-        elif chest_choice == "Quit":
+        elif chest_choice == "quit":
             print(f"{messages['Quit']} ")
             sys.exit()
         else:
@@ -263,8 +249,8 @@ print(f"Type Quit at any time to quit the game. ")
 # Set us game by hiding the key on a random tile
 SetUpGame()
 while True:
-    location_description =  map[row][col]
-    for tile in tiles:
+    location_description =  map.map[row][col]
+    for tile in map.tiles:
       if tile == location_description:
-        print(tiles[tile]["Description"])
+        print(map.tiles[tile]["Description"])
     MainMenu()

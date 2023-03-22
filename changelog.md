@@ -45,3 +45,10 @@ fixed - Headers DocString
 updated - Header information
 created - lists for the main menu and directions menu
 updated - user input to deal ignor capitalization
+
+v5.0
+add - file to read
+remove - unessesary map and tile global variables calls
+add - call values using the module_name 
+      module_name.function_name()
+add - ability to write a file
