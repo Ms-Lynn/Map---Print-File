@@ -1,22 +1,24 @@
 ##############################################################################
-# Title: RPG: Castle Adventure
+# Title: RPG: Castle Adventure!
 # Class: Computer Science 30
 # coder: Ms. Lynn
-# last updated: March 19th, 2023
-# version: 004
+# last updated: March 22nd, 2023
+# version: 005
 ##############################################################################
 ''' Simple Text Adventure Game!
 
     Game takes place in a castle, created with a map.
     Player can choose to move around the map and to look around.
-    Players goal is to find and open a treasure chest.
-    In order to open the teasure chest the player must find and take a key.
-    Every time the game is started the key will be placed in a randon room;
-    this is possible beucase the program imported a random library.
+    Players goal is to find and open a treasure chest. Player wins when they
+    take the gold from the treasure chest. In order to open the teasure chest 
+    the player must find and take a key. Every time the game is started the 
+    key will be placed in a randon room; this is possible because the program 
+    imported a random library.
 
     The map is make with an array(nested lists). 
     Each Map item is a type of tile.
     Tile detalies are stored in a nested dictionary(database).
+    Map information is now stored in a map.md module.
 
     Odjects characteristics and current statues are stored in a nested 
     dictionary(databases).
